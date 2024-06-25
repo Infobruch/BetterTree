@@ -1,6 +1,7 @@
-package de.tillmannrohlfing;
+package dev.pluginz;
 
-import de.tillmannrohlfing.interfaces.ComparableContent;
+import dev.pluginz.interfaces.ComparableContent;
+
 import java.util.ArrayList;
 import java.util.List;
 

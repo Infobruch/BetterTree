@@ -1,4 +1,4 @@
-package de.tillmannrohlfing;
+package dev.pluginz;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,7 +1,5 @@
-package de.tillmannrohlfing;
+package dev.pluginz;
 
-import de.tillmannrohlfing.BTree;
-import de.tillmannrohlfing.ComparableContentImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

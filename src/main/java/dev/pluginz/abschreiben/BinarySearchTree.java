@@ -27,9 +27,9 @@
  * @author Qualitaets- und UnterstuetzungsAgentur - Landesinstitut fuer Schule
  * @version Generisch_03 2017-11-28
  */
-package de.tillmannrohlfing.abschreiben;
+package dev.pluginz.abschreiben;
 
-import de.tillmannrohlfing.interfaces.ComparableContent;
+import dev.pluginz.interfaces.ComparableContent;
 
 public class BinarySearchTree<ContentType extends ComparableContent<ContentType>> {
 

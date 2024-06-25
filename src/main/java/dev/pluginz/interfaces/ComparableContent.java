@@ -1,4 +1,4 @@
-package de.tillmannrohlfing.interfaces;
+package dev.pluginz.interfaces;
 
 /**
  * The ComparableContent interface defines a contract for comparing objects of a generic type ContentType.

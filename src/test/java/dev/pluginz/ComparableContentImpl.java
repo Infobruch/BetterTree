@@ -1,6 +1,6 @@
-package de.tillmannrohlfing;
+package dev.pluginz;
 
-import de.tillmannrohlfing.interfaces.ComparableContent;
+import dev.pluginz.interfaces.ComparableContent;
 
 /**
  * The ComparableContentImpl class is an implementation of the ComparableContent interface.
