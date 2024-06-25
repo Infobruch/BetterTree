@@ -3,6 +3,7 @@ package de.tillmannrohlfing;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -30,8 +31,23 @@ public class BTreeGUI extends JPanel implements BTree.BTreeListener<ComparableCo
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        super.setBackground(Color.BLACK);
         if (bTree != null) {
-            drawTree(g, bTree.getRoot(), getWidth() / 2, 30, getWidth() / 4);
+            drawTree(g, bTree.getRoot(), getWidth() / 2, 30, calculateInitialXOffset(bTree.getRoot(), getWidth() / 2));
+        }
+    }
+
+    private int calculateInitialXOffset(BTree<ComparableContentImpl>.Node<ComparableContentImpl> node, int width) {
+        if (node == null || node.isLeaf()) {
+            return width / 4;
+        } else {
+            int maxOffset = 0;
+            for (BTree<ComparableContentImpl>.Node<ComparableContentImpl> child : node.getChildren()) {
+                if (child != null) {
+                    maxOffset = Math.max(maxOffset, calculateInitialXOffset(child, width / 2));
+                }
+            }
+            return maxOffset;
         }
     }
 
@@ -45,18 +61,21 @@ public class BTreeGUI extends JPanel implements BTree.BTreeListener<ComparableCo
      */
     private void drawTree(Graphics g, BTree<ComparableContentImpl>.Node<ComparableContentImpl> node, int x, int y, int xOffset) {
         if (node != null) {
-            int dx = xOffset / 2;
-            for (int i = 0; i <= node.getNumKeys(); i++) {
+            int childXOffset = xOffset / 2;
+            int currentX = x - (xOffset * (node.getNumKeys() - 1)) / 2;
+
+            for (int i = 0; i < node.getNumKeys() + 1; i++) {
                 if (node.getChildren()[i] != null) {
-                    g.drawLine(x, y, x - xOffset + i * dx, y + 50);
-                    drawTree(g, node.getChildren()[i], x - xOffset + i * dx, y + 50, dx);
+                    int childX = currentX + i * xOffset;
+                    g.drawLine(x, y, childX, y + 50);
+                    drawTree(g, node.getChildren()[i], childX, y + 50, childXOffset);
                 }
             }
 
             for (int i = 0; i < node.getNumKeys(); i++) {
-                g.setColor(Color.WHITE);
-                g.fillRect(x - 15 + i * 30, y - 15, 30, 30);
                 g.setColor(Color.BLACK);
+                g.fillRect(x - 15 + i * 30, y - 15, 30, 30);
+                g.setColor(Color.WHITE);
                 g.drawRect(x - 15 + i * 30, y - 15, 30, 30);
                 g.drawString(node.getKeys()[i].toString(), x - 10 + i * 30, y + 5);
             }
@@ -78,6 +97,7 @@ public class BTreeGUI extends JPanel implements BTree.BTreeListener<ComparableCo
      */
     public static void main(String[] args) {
         BTree<ComparableContentImpl> bTree = new BTree<>(ComparableContentImpl.class);
+        /*
         ComparableContentImpl[] values = {
                 new ComparableContentImpl(10),
                 new ComparableContentImpl(20),
@@ -99,6 +119,12 @@ public class BTreeGUI extends JPanel implements BTree.BTreeListener<ComparableCo
                 new ComparableContentImpl(5),
                 new ComparableContentImpl(11)
         };
+        */
+        Random random = new Random();
+        ComparableContentImpl[] values = new ComparableContentImpl[15];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = new ComparableContentImpl(random.nextInt(201)); // Generates a random integer between 0 and 200
+        }
 
         JFrame frame = new JFrame("B-Tree Visualization");
         BTreeGUI panel = new BTreeGUI(bTree);
