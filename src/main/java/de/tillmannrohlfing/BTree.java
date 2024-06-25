@@ -115,8 +115,29 @@ public class BTree<CT extends ComparableContent<CT>> {
      * @param i the index of the child to be split.
      */
     private void splitChild(Node<CT> node, int i) {
-        // ... implementation ...
-    }
+        Node<CT> y = node.getChildren()[i];
+            Node<CT> z = new Node<>(y.isLeaf(), clazz);
+            z.setNumKeys(Node.T - 1);
+            for (int j = 0; j < Node.T - 1; j++) {
+                z.getKeys()[j] = y.getKeys()[j + Node.T];
+            }
+            if (!y.isLeaf()) {
+                for (int j = 0; j < Node.T; j++) {
+                    z.getChildren()[j] = y.getChildren()[j + Node.T];
+                }
+            }
+            y.setNumKeys(Node.T - 1);
+            for (int j = node.getNumKeys(); j >= i + 1; j--) {
+                node.getChildren()[j + 1] = node.getChildren()[j];
+            }
+            node.getChildren()[i + 1] = z;
+            for (int j = node.getNumKeys() - 1; j >= i; j--) {
+                node.getKeys()[j + 1] = node.getKeys()[j];
+            }
+            node.getKeys()[i] = y.getKeys()[Node.T - 1];
+            node.setNumKeys(node.getNumKeys() + 1);
+            notifyListeners();
+        }
 
     /**
      * Inserts a key into a non-full node.
@@ -124,7 +145,28 @@ public class BTree<CT extends ComparableContent<CT>> {
      * @param key the key to be inserted.
      */
     private void insertNonFull(Node<CT> node, CT key) {
-        // ... implementation ...
+        int i = node.getNumKeys() - 1;
+        if (node.isLeaf()) {
+            while (i >= 0 && key.isLess(node.getKeys()[i])) {
+                node.getKeys()[i + 1] = node.getKeys()[i];
+                i--;
+            }
+            node.getKeys()[i + 1] = key;
+            node.setNumKeys(node.getNumKeys() + 1);
+        } else {
+            while (i >= 0 && key.isLess(node.getKeys()[i])) {
+                i--;
+            }
+            i++;
+            if (node.getChildren()[i].getNumKeys() == 2 * Node.T - 1) {
+                splitChild(node, i);
+                if (key.isGreater(node.getKeys()[i])) {
+                    i++;
+                }
+            }
+            insertNonFull(node.getChildren()[i], key);
+        }
+        notifyListeners();
     }
 
     /**

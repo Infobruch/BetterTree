@@ -1,21 +1,52 @@
 package de.tillmannrohlfing;
 
-import de.tillmannrohlfing.interfaces.ComparableContent;
+import de.tillmannrohlfing.BTree;
+import de.tillmannrohlfing.ComparableContentImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-class BTreeTest {
+public class BTreeTest {
 
     private BTree<ComparableContentImpl> bTree;
 
     @BeforeEach
-    void setUp() {
+    public void setup() {
         bTree = new BTree<>(ComparableContentImpl.class);
     }
 
     @Test
-    void testInsert() {
+    public void insertAndSearchForValue() {
+        ComparableContentImpl value = new ComparableContentImpl(10);
+        bTree.insert(value);
+        ComparableContentImpl result = bTree.search(value);
+        assertEquals(value, result);
+    }
+
+    @Test
+    public void searchForNonExistentValue() {
+        ComparableContentImpl value = new ComparableContentImpl(10);
+        ComparableContentImpl result = bTree.search(value);
+        assertNull(result);
+    }
+
+    @Test
+    public void insertDuplicateValue() {
+        ComparableContentImpl value = new ComparableContentImpl(10);
+        bTree.insert(value);
+        bTree.insert(value);
+        ComparableContentImpl result = bTree.search(value);
+        assertEquals(value, result);
+    }
+
+    @Test
+    public void insertAndTraverseValues() {
         ComparableContentImpl[] values = {
                 new ComparableContentImpl(10),
                 new ComparableContentImpl(20),
@@ -24,30 +55,34 @@ class BTreeTest {
                 new ComparableContentImpl(12),
                 new ComparableContentImpl(30),
                 new ComparableContentImpl(7),
-                new ComparableContentImpl(17),
-                new ComparableContentImpl(4)
+                new ComparableContentImpl(1),
+                new ComparableContentImpl(742),
+                new ComparableContentImpl(2),
+                new ComparableContentImpl(3),
+                new ComparableContentImpl(70),
+                new ComparableContentImpl(82),
+                new ComparableContentImpl(80),
+                new ComparableContentImpl(21),
+                new ComparableContentImpl(19),
+                new ComparableContentImpl(20),
+                new ComparableContentImpl(5),
+                new ComparableContentImpl(11)
         };
 
         for (ComparableContentImpl value : values) {
             bTree.insert(value);
         }
 
-        // Check if values are inserted and can be searched
-        for (ComparableContentImpl value : values) {
-            assertNotNull(bTree.search(value));
-        }
-    }
+        // Capture the output of the traverse method
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
 
-    @Test
-    void testSearch() {
-        ComparableContentImpl value1 = new ComparableContentImpl(10);
-        ComparableContentImpl value2 = new ComparableContentImpl(20);
+        bTree.traverse();
 
-        bTree.insert(value1);
-        bTree.insert(value2);
-
-        assertEquals(value1, bTree.search(value1));
-        assertEquals(value2, bTree.search(value2));
-        assertNull(bTree.search(new ComparableContentImpl(30)));
+        // Check if the output is sorted
+        String[] output = outContent.toString().split(" ");
+        int[] outputNumbers = Arrays.stream(output).mapToInt(Integer::parseInt).toArray();
+        assertTrue(IntStream.range(0, outputNumbers.length - 1)
+                .allMatch(i -> outputNumbers[i] <= outputNumbers[i + 1]));
     }
 }
