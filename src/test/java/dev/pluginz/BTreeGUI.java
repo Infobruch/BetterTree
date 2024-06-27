@@ -121,9 +121,9 @@ public class BTreeGUI extends JPanel implements BTree.BTreeListener<ComparableCo
         };
         */
         Random random = new Random();
-        ComparableContentImpl[] values = new ComparableContentImpl[15];
+        ComparableContentImpl[] values = new ComparableContentImpl[1000];
         for (int i = 0; i < values.length; i++) {
-            values[i] = new ComparableContentImpl(random.nextInt(201)); // Generates a random integer between 0 and 200
+            values[i] = new ComparableContentImpl(random.nextInt(1000)); // Generates a random integer between 0 and 200
         }
 
         JFrame frame = new JFrame("B-Tree Visualization");
@@ -139,7 +139,7 @@ public class BTreeGUI extends JPanel implements BTree.BTreeListener<ComparableCo
             protected Void doInBackground() throws Exception {
                 for (ComparableContentImpl value : values) {
                     publish(value);
-                    Thread.sleep(1000); // Adjust delay as needed
+                    //Thread.sleep(1000); // Adjust delay as needed
                 }
                 return null;
             }

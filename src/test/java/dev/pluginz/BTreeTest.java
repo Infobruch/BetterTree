@@ -1,16 +1,20 @@
 package dev.pluginz;
 
+import dev.pluginz.abschreiben.BinarySearchTree;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BTreeTest {
+@Nested
+class BTreeTest {
 
     private BTree<ComparableContentImpl> bTree;
 
@@ -42,6 +46,59 @@ public class BTreeTest {
         ComparableContentImpl result = bTree.search(value);
         assertEquals(value, result);
     }
+
+    @Test
+    public void insertRandomNumbersPerformanceTest() {
+        BinarySearchTree bst = new BinarySearchTree<ComparableContentImpl>();
+        BTreeButFast bTreeButFast = new BTreeButFast<>(ComparableContentImpl.class);
+        BTreeButFasterAsFast bTreeButFasterAsFast = new BTreeButFasterAsFast<>(ComparableContentImpl.class);
+        Random random = new Random();
+        int numNumbers = 1000000; // Number of random numbers to insert
+
+        // Generate random numbers first
+        ComparableContentImpl[] randomNumbers = new ComparableContentImpl[numNumbers];
+        for (int i = 0; i < numNumbers; i++) {
+            randomNumbers[i] = new ComparableContentImpl(random.nextInt(201));
+        }
+
+        // Insert into BTree
+        long startTime = System.nanoTime();
+        for (ComparableContentImpl value : randomNumbers) {
+            bTree.insert(value);
+        }
+        long endTime = System.nanoTime();
+        long duration = (endTime - startTime) / 1000000;
+        System.out.println("BTree: Time taken to insert " + numNumbers + " random numbers: " + duration + " milliseconds");
+
+        // Insert into BTreeButFast
+        startTime = System.nanoTime();
+        for (ComparableContentImpl value : randomNumbers) {
+            bTreeButFast.insert(value);
+        }
+        endTime = System.nanoTime();
+        duration = (endTime - startTime) / 1000000;
+        System.out.println("BTreeButFast: Time taken to insert " + numNumbers + " random numbers: " + duration + " milliseconds");
+
+        // Insert into BTreeButFasterAsFast
+        startTime = System.nanoTime();
+        for (ComparableContentImpl value : randomNumbers) {
+            bTreeButFasterAsFast.insert(value);
+        }
+        endTime = System.nanoTime();
+        duration = (endTime - startTime) / 1000000;
+        System.out.println("BTreeButFastAsFast: Time taken to insert " + numNumbers + " random numbers: " + duration + " milliseconds");
+
+
+        // Insert into BinarySearchTree
+        startTime = System.nanoTime();
+        for (ComparableContentImpl value : randomNumbers) {
+            bst.insert(value);
+        }
+        endTime = System.nanoTime();
+        duration = (endTime - startTime) / 1000000;
+        System.out.println("BST: Time taken to insert " + numNumbers + " random numbers: " + duration + " milliseconds");
+    }
+
 
     @Test
     public void insertAndTraverseValues() {
