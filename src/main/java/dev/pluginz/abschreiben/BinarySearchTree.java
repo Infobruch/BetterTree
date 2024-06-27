@@ -53,7 +53,6 @@ public class BinarySearchTree<ContentType extends ComparableContent<ContentType>
             left = new BinarySearchTree<CT>();
             right = new BinarySearchTree<CT>();
         }
-
     }
 
     /* ----------- Ende der privaten inneren Klasse -------------- */
@@ -260,5 +259,4 @@ public class BinarySearchTree<ContentType extends ComparableContent<ContentType>
     private BSTNode<ContentType> getNodeOfRightSuccessor() {
         return node.right.node;
     }
-
 }
